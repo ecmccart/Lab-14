@@ -41,6 +41,9 @@ reg1 <- lm(corn_price ~ SUR, data = WASDE)
 # View summary of regression results
 summary(reg1)
 
+tbl_regression(reg1, intercept = TRUE) %>%
+  add_glance_source_note(include = c(r.squared, nobs))
+
 # Calculate averages
 mean_sur <- mean(WASDE$SUR, na.rm = TRUE)
 mean_price <- mean(WASDE$corn_price, na.rm = TRUE)
@@ -122,8 +125,8 @@ reg3 <- lm(corn_price ~ SUR + P2006 + SUR:P2006, data = WASDE)
 summary(reg3)
 
 # Collect the residuals from the last regression, create a time series of the errors with a one-year lag of the error, then regress the error terms on the lagged error terms
-error <- ts(resid(reg3), start=1973, end=2019, frequency=1)  
-lag_error <- lag(error, -1)                                  
+error <- ts(resid(reg3), start = 1973, end = 2019, frequency = 1)
+lag_error <- stats::lag(error, -1)                                  
 error <- cbind(error, lag_error)                             
 reg4 <- lm(error ~ lag_error, data=error)
 
